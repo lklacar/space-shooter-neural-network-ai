@@ -2,6 +2,7 @@ package com.lukaklacar.spaceshooter;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.lukaklacar.spaceshooter.graphics.screens.GameScreen;
@@ -9,10 +10,17 @@ import com.lukaklacar.spaceshooter.graphics.screens.GameScreen;
 public class SpaceShooter extends Game {
     SpriteBatch batch;
 
+    public InputMultiplexer getInputMultiplexer() {
+        return inputMultiplexer;
+    }
+
+    private InputMultiplexer inputMultiplexer;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
-        setScreen(new GameScreen(10, 10));
+
+        setScreen(new GameScreen(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
     }
 
     @Override
