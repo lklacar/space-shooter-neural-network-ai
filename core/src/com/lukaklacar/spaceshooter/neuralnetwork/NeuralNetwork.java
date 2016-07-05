@@ -5,7 +5,7 @@ import com.lukaklacar.spaceshooter.math.Matrix;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NeuralNetwork implements Comparable<NeuralNetwork>, Serializable {
+public class NeuralNetwork {
 
 
     private int inputLayerCount;
@@ -68,8 +68,5 @@ public class NeuralNetwork implements Comparable<NeuralNetwork>, Serializable {
         return matrices;
     }
 
-    @Override
-    public int compareTo(NeuralNetwork o) {
-        return 0;
-    }
+
 }

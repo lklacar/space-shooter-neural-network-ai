@@ -1,5 +1,7 @@
 package com.lukaklacar.spaceshooter.genetic;
 
+import com.lukaklacar.spaceshooter.controllers.AIController;
+import com.lukaklacar.spaceshooter.entities.SpaceshipEntity;
 import com.lukaklacar.spaceshooter.math.Matrix;
 import com.lukaklacar.spaceshooter.neuralnetwork.NeuralNetwork;
 import com.lukaklacar.spaceshooter.neuralnetwork.SigmoidActivationFunction;
@@ -7,82 +9,46 @@ import com.lukaklacar.spaceshooter.util.MathUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 
 public class GeneticAlgorithm implements Serializable {
 
     private static final long serialVersionUID = 1343352967654384459L;
-    private int inputLayerSize = 9;
-    private int[] hiddenLayers = {100, 100, 100, 100,};
-    private int outputLayers = 2;
 
-    private ArrayList<NeuralNetwork> population;
+    public ArrayList<SpaceshipEntity> generateNewPopulation(ArrayList<SpaceshipEntity> population) {
 
-    public GeneticAlgorithm(int populationSize) {
-        population = new ArrayList<NeuralNetwork>();
-
-        inputLayerSize = 5;
-
-
-        for (int i = 0; i < hiddenLayers.length; i++)
-            hiddenLayers[i] = 100;
-
-        addPopulation(populationSize);
-
-    }
-
-    private void addPopulation(int populationSize) {
-        for (int i = 0; i < populationSize; i++) {
-            population.add(new NeuralNetwork(inputLayerSize, hiddenLayers,
-                    outputLayers, new SigmoidActivationFunction()));
-        }
-
-    }
-
-
-    public void generateNewPopulation() {
-        /*
-        ArrayList<NeuralNetwork> newPopulation = new ArrayList<NeuralNetwork>();
+        ArrayList<SpaceshipEntity> newPopulation = new ArrayList<SpaceshipEntity>();
         Collections.sort(population);
 
-        // // ELITE
-        for (NeuralNetwork nn : population) {
-            if (nn.getFitness() > 359) {
-                newPopulation.add(nn);
-            }
-        }
-        while (newPopulation.size() < 2) {
-            newPopulation.add(population.get(newPopulation.size()));
-        }
 
-        int k = newPopulation.size() / 2;
-        for (int i = 0; i < population.size() / 2 - k; i++) {
-            int first = choose();
-            int second = choose();
+        for (int i = 0; i < population.size() / 2; i++) {
+            int first = choose(population);
+            int second = choose(population);
             while (second == first)
-                second = choose();
+                second = choose(population);
 
             newPopulation.addAll(generateNewPair(population.get(first),
                     population.get(second)));
 
         }
 
-        population = newPopulation;*/
+        return newPopulation;
 
     }
 
-    private ArrayList<NeuralNetwork> generateNewPair(NeuralNetwork a,
-                                                     NeuralNetwork b) {
+    private ArrayList<SpaceshipEntity> generateNewPair(SpaceshipEntity a,
+                                                       SpaceshipEntity b) {
         Random random = new Random();
-        NeuralNetwork first = new NeuralNetwork(inputLayerSize, hiddenLayers,
-                outputLayers, new SigmoidActivationFunction());
-        NeuralNetwork second = new NeuralNetwork(inputLayerSize, hiddenLayers,
-                outputLayers, new SigmoidActivationFunction());
+        NeuralNetwork first = new NeuralNetwork(6, new int[]{200, 200, 200}, 5, new SigmoidActivationFunction());
+        NeuralNetwork second = new NeuralNetwork(6, new int[]{200, 200, 200}, 5, new SigmoidActivationFunction());
+
+
         double mutateTolerance = 0.02;
-        for (int k = 0; k < a.getMatrices().size(); ++k) {
-            Matrix M = a.getMatrices().get(k);
-            Matrix N = b.getMatrices().get(k);
+        for (int k = 0; k < a.getController().getNn().getMatrices().size(); ++k) {
+            Matrix M = a.getController().getNn().getMatrices().get(k);
+            Matrix N = b.getController().getNn().getMatrices().get(k);
             int n = random.nextInt(M.getN());
             for (int i = 0; i < M.getM(); ++i) {
                 for (int j = 0; j < M.getN(); ++j) {
@@ -118,9 +84,17 @@ public class GeneticAlgorithm implements Serializable {
                 }
             }
         }
-        ArrayList<NeuralNetwork> pair = new ArrayList<NeuralNetwork>();
-        pair.add(first);
-        pair.add(second);
+
+        AIController controller1 = new AIController(first);
+        AIController controller12 = new AIController(second);
+
+
+        ArrayList<SpaceshipEntity> pair = new ArrayList<SpaceshipEntity>();
+
+        pair.add(new SpaceshipEntity(MathUtil.randVector(0, 1000), controller1));
+        pair.add(new SpaceshipEntity(MathUtil.randVector(0, 1000), controller12));
+
+
         return pair;
     }
 
@@ -128,10 +102,20 @@ public class GeneticAlgorithm implements Serializable {
         return MathUtil.randRange(-4, 4);
     }
 
-    private int choose() {
-        /*
+    private int choose(ArrayList<SpaceshipEntity> population) {
+
+
+        Collections.sort(population);
+        int lowest = population.get(0).getFitness();
+        int highest = population.get(population.size() - 1).getFitness();
+
+        for (SpaceshipEntity entity : population) {
+            entity.setFitness(entity.getFitness() + Math.abs(lowest));
+        }
+
+
         double sum = 0;
-        for (NeuralNetwork nn : population)
+        for (SpaceshipEntity nn : population)
             sum += nn.getFitness();
 
         double random = MathUtil.randRange(0, sum);
@@ -141,17 +125,12 @@ public class GeneticAlgorithm implements Serializable {
             sum += population.get(i).getFitness();
             if (sum > random)
                 return i;
-        }*/
+        }
 
         return 0;
+
+
     }
 
-    public ArrayList<NeuralNetwork> getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(ArrayList<NeuralNetwork> population) {
-        this.population = population;
-    }
 
 }

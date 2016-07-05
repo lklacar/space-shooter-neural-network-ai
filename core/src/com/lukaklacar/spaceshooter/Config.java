@@ -7,6 +7,6 @@ public class Config {
 
     public static final int PLAYER_SPEED = 5;
     public static final int PLAYER_SIZE = 30;
-
+    public static final int BULLET_SPEED = 30;
 
 }
