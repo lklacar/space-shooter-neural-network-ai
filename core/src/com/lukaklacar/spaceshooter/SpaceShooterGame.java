@@ -35,7 +35,7 @@ public class SpaceShooterGame extends AbstractGame {
         geneticAlgorithm = new GeneticAlgorithm();
 
 
-
+/*
         ObjectInputStream oos = null;
         try {
             oos = new ObjectInputStream(new FileInputStream("population_1.dat"));
@@ -47,13 +47,12 @@ public class SpaceShooterGame extends AbstractGame {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
-/*
         populate(20);
 
-        train(1000, 50);
+        train(1000, 500);
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("population.dat"));
@@ -64,7 +63,7 @@ public class SpaceShooterGame extends AbstractGame {
             e.printStackTrace();
         }
 
-*/
+
     }
 
     private void centerCameraToBest() {
