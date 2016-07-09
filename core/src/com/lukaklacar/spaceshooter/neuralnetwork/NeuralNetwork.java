@@ -5,7 +5,7 @@ import com.lukaklacar.spaceshooter.math.Matrix;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NeuralNetwork {
+public class NeuralNetwork implements Serializable {
 
 
     private int inputLayerCount;

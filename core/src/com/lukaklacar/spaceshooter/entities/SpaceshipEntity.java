@@ -1,71 +1,23 @@
 package com.lukaklacar.spaceshooter.entities;
 
 import com.badlogic.gdx.math.Vector2;
-import com.lukaklacar.spaceshooter.Config;
+import com.lukaklacar.spaceshooter.config.Config;
 import com.lukaklacar.spaceshooter.controllers.AIController;
 import com.lukaklacar.spaceshooter.controllers.Controller;
+import com.lukaklacar.spaceshooter.world.AbstractWorld;
+import com.lukaklacar.spaceshooter.world.SpaceShooterWorld;
 
 /**
  * Created by Luka on 6/3/2016.
  */
 
-public class SpaceshipEntity implements Comparable<SpaceshipEntity> {
+public abstract class SpaceshipEntity extends PhysicsEntity implements Comparable<SpaceshipEntity> {
 
-
-    private Vector2 position;
-    private Vector2 size;
-    private Vector2 velocity;
-    private AIController controller;
     private int fitness;
 
-    public AIController getController() {
-        return controller;
-    }
-
-    public void setController(AIController controller) {
-        this.controller = controller;
-    }
-
-    public SpaceshipEntity(Vector2 position, AIController controller) {
-
-        this.position = position;
-        this.velocity = new Vector2();
-        this.size = new Vector2(Config.PLAYER_SIZE, Config.PLAYER_SIZE);
-        this.controller = controller;
+    public SpaceshipEntity(Vector2 position, Vector2 size, Vector2 velocity) {
+        super(position, size);
         fitness = 0;
-
-    }
-
-    public void update() {
-        /*
-        Vector2 tempPosition = new Vector2(position.x, position.y);
-        tempPosition = tempPosition.add(velocity);
-        if (tempPosition.x < 1000 - Config.PLAYER_SIZE && tempPosition.y < 1000 - Config.PLAYER_SIZE && tempPosition.x > 0 && tempPosition.y > 0)*/
-        position = position.add(velocity);
-
-
-        controller.update(this);
-    }
-
-
-    public Vector2 getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(Vector2 velocity) {
-        this.velocity = velocity;
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector2 position) {
-        this.position = position;
-    }
-
-    public Vector2 getSize() {
-        return size;
     }
 
     public int getFitness() {
@@ -76,11 +28,21 @@ public class SpaceshipEntity implements Comparable<SpaceshipEntity> {
         this.fitness = fitness;
     }
 
-    public void addFittenss() {
+    public void shootBullet(Vector2 velocity) {
+        Bullet bullet = new Bullet(this);
+        bullet.setPosition(new Vector2(position.x, position.y));
+        bullet.setAngle(angle);
+        bullet.setSize(new Vector2(5, 5));
+        bullet.setVelocity(velocity);
+
+        SpaceShooterWorld.getInstance().getEntities().add(bullet);
+    }
+
+    public void addFitness(){
         fitness++;
     }
 
-    public void remoteFitness() {
+    public void removeFitness(){
         fitness--;
     }
 
@@ -94,4 +56,7 @@ public class SpaceshipEntity implements Comparable<SpaceshipEntity> {
         return 1;
 
     }
+
+    @Override
+    public abstract Controller getController();
 }
